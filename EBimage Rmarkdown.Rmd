@@ -1,0 +1,169 @@
+---
+title: "Analisis Gambar Menggunakan EBImage"
+author: "Alfina Nurrahma N | Dosen Pengampu : Prof. Dr.SUHARTONO, M.Kom"
+date: "13 Maret 2021"
+output: 
+  html_document :
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+---
+
+# Selamat datang
+
+##### Assalamualaikum.. Disini saya akan mencoba untuk menganalisis sebuah gambar menggunakan EBImage. Nah sebelum mempelajari hal itu, kita harus mengetahui apa yang itu EBImage?
+
+![gambar EBImage](http://www.imsbio.co.jp/RGM-files/R_BC/result/EBImage/floodFill.Rd_001_large.png)
+
+> EBImage menyediakan fungsionalitas tujuan umum untuk pemrosesan dan analisis gambar. Dalam konteks pengujian seluler berbasis mikroskop (high-throughput). Hal ini memungkinkan otomatisasi tugas tersebut menggunakan bahasa pemrograman R dan memfasilitasi penggunaan alat lain di lingkungan R untuk pemrosesan sinyal, pemodelan statistik, pembelajaran mesin, dan visualisasi dengan data gambar. 
+
+> jadi singkatnya. kita bisa menganalisis serta mengedit (mengatur kecerahan, kontras, ukuran, filter, dan lain-lain) dari gambar tersebut agar sesuai keinginan kita. 
+Lalu bagaimana caranya untuk menganalisis sebuah gambar?
+
+# Menginstal library(EBImage)
+Jadi kita harus meng-instal terlebih dahulu packages EBImage pada console dengan memasukkan tulisan seperti dibawah ini, lalu klik enter. Maka komputer akan otomatis meng-instal packages EBImage dan kita harus menunggu beberapa menit.
+
+![gambar instal library](D:/cara import.jpg)
+
+# Mengimpor Library
+Setelah selesai men-instal library, langkah selanjutnya adalah mengimpor library dengan kode program berikut ini :
+
+```{r}
+library(EBImage)
+```
+
+# Mengimpor Gambar
+Selanjutnya kita dapat meng-impor gambar yang diinginkan. Di sini saya mencoba untuk meng-impor gambar dari Universitas Islam Negeri Maulana Malik Ibrahim Malang dari komputer saya, dengan kode program sebagai berikut :
+
+```{r}
+Image <- readImage("D:/UIN Malang.jpg")
+display(Image)
+```
+
+# Menampilkan Detail Gambar
+Kita bisa mengetahui detail dari gambar diatas dengan mengetikkan kode berikut :
+
+```{r}
+print(Image)
+```
+
+
+# Menampilkan Histogram Gambar
+Kita bisa mengetahui detail histogram dari gambar diatas dengan mengetikkan kode berikut :
+
+```{r}
+hist(Image)
+```
+
+
+# Menyesuaikan Kecerahan
+Disini kita akan mencoba untuk memanipulasi kecerahan gambar menggunakan tanda + dan - pada intensitas/kecerahan gambar. Pada gambar a kecerahan ditambah 0.2 dan gambar b kecerahan ditambah 0.2 didapatkan perbandingan di bawah. Berikut kode programnya :
+
+```{r}
+a <- Image + 0.2
+b <- Image - 0.3
+par(mfrow = c(1,2))
+plot(a)
+plot(b)
+```
+
+
+# Menyesuaikan Kontras
+Kita akan mencoba untuk memanipulasi kontras gambar menggunakan tanda * pada kontras gambar. Pada gambar a kecerahan ditambah 0.2 dan gambar b kecerahan ditambah 0.2 didapatkan perbandingan di bawah. Berikut kode programnya :
+
+```{r}
+c <- Image * 2
+d <- Image * 0.6
+par(mfrow = c(1,2))
+plot(c)
+plot(d)
+```
+
+
+# Koreksi Gamma
+Kita akan mencoba untuk memanipulasi gamma gambar menggunakan tanda ^. Pada gambar pertama menggunakan 4 dan gambar kedua menggunakan 0.3 didapatkan perbandingan di bawah. Berikut kode programnya :
+
+```{r}
+e <- Image ^ 4
+f <- Image ^ 0.3
+par(mfrow = c(1,2))
+plot(e)
+plot(f)
+```
+
+
+
+# Memotong Gambar
+Kita akan mencoba memotong gambar dengan kode berikut :
+
+```{r}
+display(Image[189:1000, 100:600,])
+```
+
+
+# Memutar Gambar
+Kita akan mencoba memutar gambar dengan posisi 45 derajat dengan kode berikut :
+
+```{r}
+Imagetr <- translate(rotate(Image, 45), c(0, 50))
+display(Imagetr)
+```
+
+
+# Memanajemen warna
+Karena array piksel memiliki tiga sumbu di dimensi. Sumbu ketiga adalah slot untuk tiga saluran: merah, hijau dan biru, atau RGB. Disini saya akan membuat gambarnya berwarna hitam putih dengan kode beikut :
+
+```{r}
+colorMode(Image) <- Grayscale
+print(Image)
+```
+
+Dibawah ini merupakah hasil dari manajeman warna diatas
+
+```{r}
+display(Image)
+```
+
+lalu bisa kita buat menjadi berwarna kembali
+```{r}
+colorMode(Image) <- Color
+display(Image)
+```
+
+
+# Memberikan Filter
+Pada bagian ini kita akan melakukan smoothing / blurring menggunakan low-pass filter dan deteksi tepi menggunakan high-pass filter. Berikut kodenya :
+
+* menggunakan low-pass filter
+
+```{r}
+fLow <- makeBrush(21, shape= 'disc', step=FALSE)^2
+fLow <- fLow/sum(fLow)
+Image.fLow <- filter2(Image, fLow)
+display(Image.fLow)
+```
+
+* menggunakan high-pass filter
+
+```{r}
+fHigh <- matrix(1, nc = 3, nr = 3)
+fHigh[2, 2] <- -8
+Image.fHigh <- filter2(Image, fHigh)
+display(Image.fHigh)
+```
+
+Sekian dari saya kurang lebihnya mohon maaf. Jangan lupa tunggu update selanjutnya
+
+---
+Copyright : ‪Prof. Dr. Suhartono S.Si M.Kom UIN Maulana Malik Ibrahim Malang
+
+Daftar pustaka :
+
+* [Analisis Image menggunakan Ebimage di R PART 1](https://thinkstudioo.blogspot.com/2018/03/analisis-image-menggunakan-ebimage-di-r.html)
+* [Analisis Image menggunakan EBImage di R PART 2](https://thinkstudioo.blogspot.com/2018/03/analisis-image-menggunakan-ebimage-di-r_6.html)
+* [Panduan Lengkap Belajar Menulis dengan Markdown untuk Pemula](https://www.petanikode.com/markdown-pemula/)
+
+
+
